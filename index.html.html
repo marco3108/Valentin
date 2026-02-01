@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Valentinstag 💘</title>
+<style>
+  :root{
+    --bg1:#ff9a9e;
+    --bg2:#fad0c4;
+    --card:#ffffffcc;
+    --shadow: 0 24px 60px rgba(0,0,0,.18);
+    --yes:#ff3d6e;
+    --yes2:#ff6b91;
+    --text:#1f2937;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    color:var(--text);
+    background: radial-gradient(1200px 700px at 15% 10%, rgba(255,255,255,.55), transparent 60%),
+                radial-gradient(900px 600px at 85% 15%, rgba(255,255,255,.35), transparent 55%),
+                linear-gradient(135deg,var(--bg1),var(--bg2));
+    overflow:hidden;
+  }
+
+  /* Floating hearts in background */
+  .float{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.55;
+    filter: blur(.2px);
+  }
+  .float span{
+    position:absolute;
+    font-size:18px;
+    animation: drift linear infinite;
+  }
+  @keyframes drift{
+    from{ transform: translateY(110vh) translateX(0) rotate(0deg); opacity:0; }
+    10%{opacity:1}
+    to{ transform: translateY(-20vh) translateX(30px) rotate(360deg); opacity:0; }
+  }
+
+  .card{
+    position:relative;
+    background:var(--card);
+    backdrop-filter: blur(10px);
+    padding:30px 26px 28px;
+    border-radius:22px;
+    box-shadow:var(--shadow);
+    text-align:center;
+    max-width:440px;
+    width:min(92vw, 440px);
+    border:1px solid rgba(255,255,255,.55);
+  }
+
+  .badge{
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    padding:8px 12px;
+    border-radius:999px;
+    background:rgba(255,255,255,.65);
+    border:1px solid rgba(255,255,255,.8);
+    font-size:13px;
+    margin-bottom:14px;
+  }
+
+  h1{
+    margin:0 0 10px;
+    font-size:28px;
+    letter-spacing:.2px;
+  }
+  p{
+    margin:0;
+    font-size:16px;
+    line-height:1.45;
+    opacity:.95;
+  }
+
+  .buttons{
+    position:relative;
+    height:150px;
+    margin-top:22px;
+    border-radius:16px;
+    background:rgba(255,255,255,.35);
+    border:1px dashed rgba(255,255,255,.7);
+    overflow:hidden;
+  }
+
+  button{
+    padding:14px 26px;
+    border:none;
+    border-radius:999px;
+    font-size:16px;
+    cursor:pointer;
+    box-shadow:0 12px 22px rgba(0,0,0,.16);
+    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+    user-select:none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #yes{
+    position:absolute;
+    left:18px;
+    top:18px;
+    background:linear-gradient(135deg,var(--yes),var(--yes2));
+    color:#fff;
+  }
+  #yes:hover{ transform: translateY(-1px); box-shadow:0 16px 30px rgba(0,0,0,.18); }
+  #yes:active{ transform: translateY(0px) scale(.99); filter:saturate(1.05); }
+
+  #no{
+    position:absolute;
+    background:#b7bcc4;
+    color:#1f2937;
+    pointer-events:none; /* makes "Nein" unclickable */
+    opacity:.95;
+  }
+
+  .hint{
+    margin-top:12px;
+    font-size:12px;
+    opacity:.7;
+  }
+
+  /* Celebration UI */
+  .dance{
+    font-size:64px;
+    margin:12px 0 8px;
+    animation:dance .8s infinite alternate;
+  }
+  @keyframes dance{
+    from{ transform:translateY(0) rotate(-6deg); }
+    to{ transform:translateY(-12px) rotate(6deg); }
+  }
+
+  .confetti{
+    position:fixed;
+    top:-12px;
+    font-size:24px;
+    animation: fall linear forwards;
+    will-change: transform, opacity;
+  }
+  @keyframes fall{
+    to{ transform:translateY(110vh) rotate(540deg); opacity:0; }
+  }
+
+  .sparkle{
+    display:inline-block;
+    animation: twinkle 1.2s infinite ease-in-out;
+  }
+  @keyframes twinkle{
+    0%,100%{transform:scale(1); opacity:.9}
+    50%{transform:scale(1.15); opacity:1}
+  }
+</style>
+</head>
+<body>
+
+<div class="float" id="float"></div>
+
+<div class="card" id="card">
+  <div class="badge"><span class="sparkle">✨</span> Kleine Frage <span class="sparkle">✨</span></div>
+  <h1>Selina</h1>
+  <p>Hättest du Lust, mein Valentinstag‑Date zu sein? 🙂</p>
+
+  <div class="buttons" id="area" aria-label="Antwort auswählen">
+    <button id="yes">Ja 😊</button>
+    <button id="no">Nein 🙃</button>
+  </div>
+
+  <div class="hint">Tipp: Manche Buttons sind ein bisschen schüchtern 😄</div>
+</div>
+
+<script>
+  // Background floaty hearts
+  const float = document.getElementById('float');
+  const icons = ['💖','💘','💕','✨','💗'];
+  for (let i=0;i<22;i++){
+    const s = document.createElement('span');
+    s.textContent = icons[Math.floor(Math.random()*icons.length)];
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.animationDuration = (8 + Math.random()*10) + 's';
+    s.style.animationDelay = (-Math.random()*12) + 's';
+    s.style.fontSize = (14 + Math.random()*18) + 'px';
+    float.appendChild(s);
+  }
+
+  const noBtn = document.getElementById('no');
+  const area = document.getElementById('area');
+
+  // Start position
+  function placeNoRandom(){
+    const a = area.getBoundingClientRect();
+    const x = Math.random() * (a.width  - noBtn.offsetWidth);
+    const y = Math.random() * (a.height - noBtn.offsetHeight);
+    noBtn.style.left = x + 'px';
+    noBtn.style.top  = y + 'px';
+  }
+  placeNoRandom();
+
+  // Slow, smooth "No" movement: only when pointer gets close, with cooldown.
+  let lastMove = 0;
+  const COOLDOWN_MS = 420;      // <- increase to move less often (slower)
+  const TRIGGER_PX  = 70;       // <- how close the cursor must be to scare it away
+
+  function moveNoSmooth(){
+    noBtn.style.transition = 'left 320ms ease, top 320ms ease';
+    placeNoRandom();
+  }
+
+  function onPointerMove(clientX, clientY){
+    const now = Date.now();
+    if (now - lastMove < COOLDOWN_MS) return;
+
+    const b = noBtn.getBoundingClientRect();
+    const cx = b.left + b.width/2;
+    const cy = b.top  + b.height/2;
+    const dx = clientX - cx;
+    const dy = clientY - cy;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist < TRIGGER_PX){
+      lastMove = now;
+      moveNoSmooth();
+    }
+  }
+
+  area.addEventListener('mousemove', (e)=> onPointerMove(e.clientX, e.clientY));
+  area.addEventListener('touchstart', ()=>{
+    // On mobile, just nudge occasionally
+    const now = Date.now();
+    if (now - lastMove < 550) return;
+    lastMove = now;
+    moveNoSmooth();
+  }, {passive:true});
+
+  // Confetti
+  function confettiBoom(){
+    for(let i=0;i<100;i++){
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.textContent = ['🎉','🎊','💖','✨','🥰'][Math.floor(Math.random()*5)];
+      c.style.left = (Math.random()*100) + 'vw';
+      c.style.animationDuration = (2.2 + Math.random()*2.4) + 's';
+      c.style.fontSize = (18 + Math.random()*14) + 'px';
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(), 5200);
+    }
+  }
+
+  document.getElementById('yes').addEventListener('click', ()=>{
+    document.getElementById('card').innerHTML = `
+      <div class="badge"><span class="sparkle">✨</span> JAAAA <span class="sparkle">✨</span></div>
+      <h1>Yes! 🎉</h1>
+      <div class="dance">💃🕺</div>
+      <p>Freut mich richtig 😊<br>Ich freu mich auf dich ❤️</p>
+      <div class="hint">Okay, jetzt gibt’s Konfetti. Viel Konfetti.</div>
+    `;
+    confettiBoom();
+  });
+</script>
+
+</body>
+</html>
